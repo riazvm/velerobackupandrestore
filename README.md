@@ -760,7 +760,8 @@ provisioner: kubernetes.io/vsphere-volume
 parameters:
     diskformat: thin
 ```
-
+</details>
+<br/>
 > kubectl apply -f storage-class.yaml
 
 
