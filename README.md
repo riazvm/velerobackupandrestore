@@ -744,9 +744,29 @@ namespace and an entire clusterbackup.
 
 > NOTE: planespotter , x1, y1 and z1 namespaces do not exist
 
+**Step 4:** Before backing up to a cluster make sure you have defined the storage class used by the application that is being restored. Create a storage-class on the target cluster with the following storage class definition. 
+Copy the contents of the file below to a file storage-class.yaml and create the storage class.
+
+<details><summary>storage-class.yaml</summary>
+
+```yaml
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  storageclass.kubernetes.io/is-default-class: "true"
+  name: minio-disk
+provisioner: kubernetes.io/vsphere-volume
+parameters:
+    diskformat: thin
+```
+
+> kubectl apply -f storage-class.yaml
+
+
 **RESTORE A NAMESPACE**
 
-**Step 4:** Restore the planespotter namespace from the planespotterbk
+**Step 5:** Restore the planespotter namespace from the planespotterbk
 created in the previous step
 
 > cd \~/velero/velero-v1.4.0-linux-amd64
@@ -755,7 +775,7 @@ created in the previous step
 
 ![](./media/image34.png)
 
-**Step 5:** Check the status of the restore in the cluster, the
+**Step 6:** Check the status of the restore in the cluster, the
 planespotter namespace should be created and the pods should be up and
 running. Make sure that the pv is also created and bound
 
@@ -771,7 +791,7 @@ running. Make sure that the pv is also created and bound
 
 ![](./media/image37.png)
 
-**Step 6:** Get the external ip for the planespotter app and point the
+**Step 7:** Get the external ip for the planespotter app and point the
 browser to it and make sure all the data is visible in the application
 and the application is reachable
 
@@ -781,14 +801,14 @@ and the application is reachable
 
 ![](./media/image39.png)
 
-**Step** **7:** Delete the planespotter namespace which will delete the
+**Step 8:** Delete the planespotter namespace which will delete the
 application and the PV
 
 > kubectl delete ns planespotter
 
 **RESTORE THE CLUSTER BACKUP**
 
-**Step 8:** Restore the back of all resources from the source cluster to
+**Step 9:** Restore the back of all resources from the source cluster to
 the target cluster
 
 > cd \~/velero/velero-v1.4.0-linux-amd64
@@ -797,7 +817,7 @@ the target cluster
 
 ![](./media/image40.png)
 
-**Step 9:** Monitor the resources created in the target cluster. The
+**Step 10:** Monitor the resources created in the target cluster. The
 planespotter , x1, y1 and z1 namespaces should be created. Pods,pv's,
 deployments and services should also be created.
 
@@ -815,7 +835,7 @@ deployments and services should also be created.
 
 ![](./media/image43.png)
 
-**Step 10:** Get the external ip for the planespotter app and point the
+**Step 11:** Get the external ip for the planespotter app and point the
 browser to it and make sure all the data is visible in the application
 and the application is reachable
 
