@@ -247,7 +247,7 @@ distribution.
 
 **Step 3:** Create as namespace to which minio can be deployed
 
-kubectl create ns minio
+> kubectl create ns minio
 
 **Step 4:** Add Bitnami helm repository
 
@@ -258,36 +258,37 @@ Create a storage-class on the infra cluster with the following storage
 class definition. Copy the contents of the file below to a file
 storage-class.yaml and create the storage class.
 
-\-\--
+<details><summary>storage-class.yaml</summary>
 
+```yaml
+---
 kind: StorageClass
-
 apiVersion: storage.k8s.io/v1
-
 metadata:
-
-name: minio-disk
-
+  name: minio-disk
 provisioner: kubernetes.io/vsphere-volume
-
 parameters:
+    diskformat: thin
+```
 
-diskformat: thin
+</details>
+<br/>
 
-kubectl apply -f storage-class.yaml
+> kubectl apply -f storage-class.yaml
+
 
 **Step 6:** Deploy the Bitnami Minio release. This will create the
 necessary resources to run Minio within the minio namespace
 
-heml install minio-release -n minio \\
+> heml install minio-release -n minio \\
 
-\--set access.Key.password=minio \\
+> \--set access.Key.password=minio \\
 
-\--set secretKey.password=minio123 \\
+> \--set secretKey.password=minio123 \\
 
-\--set persistence.storageClass=minio-disk \\
+> \--set persistence.storageClass=minio-disk \\
 
-bitnami/minio
+> bitnami/minio
 
 **Step 7:** Check for all pods, deployments and services and make sure
 everything is created and the pods are running as expected. Also check
