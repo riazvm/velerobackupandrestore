@@ -281,14 +281,10 @@ parameters:
 necessary resources to run Minio within the minio namespace
 
 > heml install minio-release -n minio \\
-
-> \--set access.Key.password=minio \\
-
-> \--set secretKey.password=minio123 \\
-
-> \--set persistence.storageClass=minio-disk \\
-
-> bitnami/minio
+>\--set access.Key.password=minio \\
+>\--set secretKey.password=minio123 \\
+>\--set persistence.storageClass=minio-disk \\
+>bitnami/minio
 
 **Step 7:** Check for all pods, deployments and services and make sure
 everything is created and the pods are running as expected. Also check
