@@ -322,7 +322,7 @@ when we install Velero to the clusters in the following steps:
 
 ![](./media/image9.png)
 
-![](./media/image10.png){width="7.5in" height="3.7875in"}
+![](./media/image10.png)
 
 ![](./media/image11.png)
 
@@ -350,8 +350,11 @@ release link 'Copy Link address'
 **Step 3**: Download and uncompress the Velero distribution
 
 > mkdir velero
+
 > cd \~/velero
+
 > wget <https://github.com/vmware-tanzu/velero/releases/download/v1.4.0/velero-v1.4.0-linux-amd64.tar.gz>
+
 > tar xvf velero-v1.4.0-linux-amd64.tar.gz
 
 Install Velero
@@ -371,8 +374,7 @@ ci-cluster as our source cluster.
 
 **Step 2:** Get kube config for the source cluster
 
-> pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
-\ <password\> -k
+> pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p \<password\> -k
 
 > E.g.
 
@@ -416,13 +418,10 @@ kubectl config use-context \<source-cluster\>
 > \--backup-location-config
 > region=minio,s3ForcePathStyle=\"true\",s3Url=*\>*
 
-Note: the secret file points to location of the file credentials file we
-created above
+> NOTE: the secret file points to location of the file credentials file we created above use restic to backup pv's the s3Url points to the Minio that was
+> setup earlier
 
-use restic to backup pv's the s3Url points to the Minio that was setup
-earlier
-
-E.g.
+> E.g.
 
 > ./velero install \\\
 > \--provider aws \\\
@@ -516,9 +515,9 @@ aws_secret_access_key = minio123
 > \--backup-location-config
 > region=minio,s3ForcePathStyle=\"true\",s3Url=*\>*
 
-Note: the secret file points to the file credentials file we created
-above use restic to backup pv's the s3Url points to the Minio that was
-setup earlier
+> NOTE: the secret file points to the file credentials file we created
+> above use restic to backup pv's the s3Url points to the Minio that was
+> setup earlier
 
 E.g.
 
@@ -587,14 +586,14 @@ backing up just a namespace in a cluster
 
 ![](./media/image22.png)
 
-NOTE: apart from the default and system namespaces, planespotter, x1, y1
-and z1 exist
+> NOTE: apart from the default and system namespaces, planespotter, x1, y1
+> and z1 exist
 
 > kubectl get po \--all-namespaces
 
 ![](./media/image23.png)
 
-> NOTE: Note the pods running in the default, planespotter and the x1,
+> NOTE:  The pods running in the default, planespotter and the x1,
 > y1 and z1 namespaces
 
 > kubectl get pv \--all-namespaces
@@ -633,45 +632,31 @@ stateful pod
 
 The volumes are
 
+```yaml
 Volumes:
-
-**mysql-vol:**
-
-Type: PersistentVolumeClaim (a reference to a PersistentVolumeClaim in
-the same namespace)
-
-ClaimName: mysql-claim
-
-ReadOnly: false
-
-**mysql-config:**
-
-Type: ConfigMap (a volume populated by a ConfigMap)
-
-Name: mysql-config-map
-
-Optional: false
-
-**mysql-start:**
-
-Type: ConfigMap (a volume populated by a ConfigMap)
-
-Name: mysql-start-map
-
-Optional: false
-
+  mysql-vol:
+    Type: PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName: mysql-claim
+    ReadOnly: false
+  mysql-config:
+    Type: ConfigMap (a volume populated by a ConfigMap)
+    Name: mysql-config-map
+    Optional: false
+  mysql-start:
+    Type: ConfigMap (a volume populated by a ConfigMap)
+    Name: mysql-start-map
+    Optional: false
+```
 ![](./media/image27.png)
 
 **Step 7:** Annotate the mysql-0 pod
 
-> kubectl -n planespotter annotate pod/\<mysql pod name from 4.3 eg.
-> mysql-0\>
+> kubectl -n planespotter annotate pod \<mysql pod name from 4.3 eg.mysql-0\>
 > backup.velero.io/backup-volumes=mysql-vol,mysql-config,mysql-start
 >
 > e.g.
 >
-> kubectl -n planespotter annotate pod/mysql-0
-> backup.velero.io/backup-volumes=mysql-vol,mysql-config,mysql-start
+> kubectl -n planespotter annotate pod/mysql-0 backup.velero.io/backup-volumes=mysql-vol,mysql-config,mysql-start
 
 **Step 8:** Create a backup of the whole cluster
 
@@ -757,7 +742,7 @@ namespace and an entire clusterbackup.
 
 ![](./media/image33.png)
 
-NOTE: planespotter , x1, y1 and z1 namespaces do not exist
+> NOTE: planespotter , x1, y1 and z1 namespaces do not exist
 
 **RESTORE A NAMESPACE**
 
@@ -854,7 +839,7 @@ Compatibility
 
 -   vSphere CSI/CNS driver 1.0.2 or above
 
--   Kubernetes 1.14 or above (note: the Velero Plug-in for vSphere does
+-   Kubernetes 1.14 or above (NOTE: the Velero Plug-in for vSphere does
     not support Guest or Supervisor clusters on vSphere yet)
 
 **Step 1:** Add the vSphere velero plugin
