@@ -2,7 +2,7 @@ VMware Advanced Customer Engagements (ACE) Team
 
 June 2020
 
-Table of Contents {#table-of-contents .TOC-Heading}
+Table of Contents 
 =================
 
 [Introduction 3](#introduction)
@@ -114,8 +114,7 @@ they were backed up from.
 
 **How it Works**
 
-**On-demand backups\
-**
+**On-demand backups**
 
 -   Uploads a tarball of copied Kubernetes objects into cloud object
     storage.
@@ -134,8 +133,6 @@ The **restore** operation allows you to restore all of the objects and
 persistent volumes from a previously created backup. You can also
 restore only a filtered subset of objects and persistent volumes.
 
-**\
-**
 
 **Backup workflow**
 
@@ -158,7 +155,7 @@ volumes. You can adjust the snapshots by specifying additional flags.
 Run Velero backup create \--help to see available flags. Snapshots can
 be disabled with the option \--snapshot-volumes=false.
 
-![19](./media/image1.png){width="7.5in" height="2.373611111111111in"}
+![19](./media/image1.png)
 
 You can run Velero in Kubernetes clusters on a cloud provider or
 on-premises. For detailed information, see [Compatible Storage
@@ -206,9 +203,6 @@ The following assumptions are made in the guide:
 -   The Minio backup endpoint is accessible from both the source and
     target clusters.
 
-```{=html}
-<!-- -->
-```
 -   A Linux/ubuntu machine is provisioned to install and use various
     software components
 
@@ -228,9 +222,6 @@ The following assumptions are made in the guide:
 
 -   The source K8s clusters have applications deployed
 
-```{=html}
-<!-- -->
-```
 -   A sample application is planespotter
     (<https://github.com/CNA-Tech/PKS-Ninja/tree/master/LabGuides/DeployPlanespotter-DP6539>)
 
@@ -248,13 +239,11 @@ distribution.
 
 **Step 2:** Get kube config for the infra cluster
 
-pks get-kubeconfig infra-cluster -a \<pks api\> -u \<user\> -p
-\<password\> -k
+> pks get-kubeconfig infra-cluster -a \<pks api\> -u \<user\> -p \<password\> -k
 
-E.g.
+> E.g.
 
-pks get-kubeconfig infra-cluster -a pks.corp.local -u riaz -p VMware1!
--k
+> pks get-kubeconfig infra-cluster -a pks.corp.local -u riaz -p VMware1! -k
 
 **Step 3:** Create as namespace to which minio can be deployed
 
