@@ -280,21 +280,17 @@ parameters:
 **Step 6:** Deploy the Bitnami Minio release. This will create the
 necessary resources to run Minio within the minio namespace
 
-> heml install minio-release -n minio \\
->\--set access.Key.password=minio \\
->\--set secretKey.password=minio123 \\
->\--set persistence.storageClass=minio-disk \\
->bitnami/minio
+> heml install minio-release -n minio --set access.Key.password=minio --set secretKey.password=minio123 --set persistence.storageClass=minio-disk bitnami-minio
 
 **Step 7:** Check for all pods, deployments and services and make sure
 everything is created and the pods are running as expected. Also check
 if the PVC is created and bound
 
-kubectl get all -n minio
+> kubectl get all -n minio
 
-kubectl get pvc -n minio
+> kubectl get pvc -n minio
 
-kubectl get deployment -n minio
+> kubectl get deployment -n minio
 
 ![](./media/image3.png)
 
@@ -305,19 +301,17 @@ kubectl get deployment -n minio
 **Step 8:** Expose the deployment as a loadbalancer. This will create
 any lb within NSXT as an ingress.
 
-> kubectl expose deployment minio-release \--name=minio-frontend-lb
-> \--port=80 \--target-port=9000 \--type=LoadBalancer \--namespace=minio
+> kubectl expose deployment minio-release --name=minio-frontend-lb --port=80 --target-port=9000 --type=LoadBalancer --namespace=minio
 
 **Step 9:** Check the IP under the "External-IP" section, point your
 browser to the location \<external-ip\>. The Minio application should be
 accessible
 
-kubectl get svc -n minio
+> kubectl get svc -n minio
 
-![](./media/image6.png){width="7.5in" height="0.7111111111111111in"}
+![](./media/image6.png)
 
-![A screenshot of a computer Description automatically
-generated](./media/image7.png)
+![](./media/image7.png)
 
 **Step 10:** Login with the credentials used in step 6. - minio/minio123
 
@@ -355,14 +349,10 @@ release link 'Copy Link address'
 
 **Step 3**: Download and uncompress the Velero distribution
 
-mkdir velero
-
-cd \~/velero
-
-wget
-<https://github.com/vmware-tanzu/velero/releases/download/v1.4.0/velero-v1.4.0-linux-amd64.tar.gz>
-
-tar xvf velero-v1.4.0-linux-amd64.tar.gz
+> mkdir velero
+> cd \~/velero
+> wget <https://github.com/vmware-tanzu/velero/releases/download/v1.4.0/velero-v1.4.0-linux-amd64.tar.gz>
+> tar xvf velero-v1.4.0-linux-amd64.tar.gz
 
 Install Velero
 --------------
@@ -381,33 +371,32 @@ ci-cluster as our source cluster.
 
 **Step 2:** Get kube config for the source cluster
 
-pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
-\<password\> -k
+> pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
+\ <password\> -k
 
-E.g.
+> E.g.
 
-pks get-kubeconfig ci-cluster -a pks.corp.local -u riaz -p VMware1! -k
+> pks get-kubeconfig ci-cluster -a pks.corp.local -u riaz -p VMware1! -k
 
 ![](./media/image13.png)
 
 **Step 3:** Create a velero namespace
 
-kubectl create ns velero
+> kubectl create ns velero
 
 **Step 4:** Change directory to the velero directory
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
 **Step 5:** Create a credentials file. Name it credentials This will
 contain the username and password used for Minio. The values would be
 the same as what was provided during the Minio setup.
 
-\[default\]
-
-aws\_access\_key\_id = minio
-
-aws\_secret\_access\_key = minio123
-
+```yaml
+[default]
+aws_access_key_id = minio
+aws_secret_access_key = minio123
+```
 **Step 6:** Set kubectl context to the source cluster
 
 kubectl config use-context \<source-cluster\>
@@ -449,21 +438,22 @@ E.g.
 
 **Step 8:** Get status of pods in the velero namespace
 
-kubectl get po -n velero
+> kubectl get po -n velero
 
 **Step 9:** If the Restic pods fail to startup we will need to edit the
 hostpath for the Restic pods
 
-kubectl edit daemonset restic -n velero
+> kubectl edit daemonset restic -n velero
 
 change hostPath from /var/lib/kubelet/pods to
 /var/vcap/data/kubelet/pods:
 
 Which will look like below
 
+```yaml
 -hostPath:
-
-path: /var/vcap/data/kubelet/pods
+   path: /var/vcap/data/kubelet/pods
+```
 
 ![](./media/image15.png)
 
@@ -479,35 +469,35 @@ restored**.** As mentioned in the assumptions section we will be using
 
 **Step 2:** Get kube config for the target cluster
 
-pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
+> pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
 \<password\> -k
 
-E.g.
+> E.g.
 
-pks get-kubeconfig my-cluster -a pks.corp.local -u riaz -p VMware1! -k
+> pks get-kubeconfig my-cluster -a pks.corp.local -u riaz -p VMware1! -k
 
 ![](./media/image17.png)
 
 **Step 3:** Create a velero namespace
 
-kubectl create ns velero
+> kubectl create ns velero
 
 **Step 4:** Change directory to the velero directory
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
 **Step 5:** The credentials file should already exist; this would be the
 same as the one created for the source cluster
 
-\[default\]
-
-aws\_access\_key\_id = minio
-
-aws\_secret\_access\_key = minio123
+```yaml
+[default]
+aws_access_key_id = minio
+aws_secret_access_key = minio123
+```
 
 **Step 7:** Set kubectl context to the source cluster
 
-kubectl config use-context \<source-cluster\>
+> kubectl config use-context \<source-cluster\>
 
 > E.g.\
 > kubectl config use-context my-cluster
@@ -542,8 +532,7 @@ E.g.
 > \--backup-location-config
 > region=minio,s3ForcePathStyle=\"true\",s3Url=http://10.40.14.136
 
-![A close up of text on a white background Description automatically
-generated](./media/image19.png)
+![](./media/image19.png)
 
 **Step 7:** Get status of pods in the velero namespace
 
@@ -561,10 +550,10 @@ change hostPath from /var/lib/kubelet/pods to
 
 Which will look like below
 
+```yaml
 -hostPath:
-
-path: /var/vcap/data/kubelet/pods
-
+   path: /var/vcap/data/kubelet/pods
+```
 ![](./media/image21.png)
 
 Backup the Source Cluster
@@ -576,49 +565,49 @@ backing up just a namespace in a cluster
 
 **Step 1:** Get kube config for the source cluster
 
-pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
+> pks get-kubeconfig \<source-cluster\> -a \<pks api\> -u \<user\> -p
 \<password\> -k
 
-E.g.
+> E.g.
 
-pks get-kubeconfig ci-cluster -a pks.corp.local -u riaz -p VMware1! -k
+> pks get-kubeconfig ci-cluster -a pks.corp.local -u riaz -p VMware1! -k
 
 ![](./media/image13.png)
 
 **Step 2:** Set kubectl context to the source cluster
 
-kubectl config use-context \<source-cluster\>
+> kubectl config use-context \<source-cluster\>
 
 > E.g.\
 > kubectl config use-context ci-cluster
 
 **Step 3:** Check all resources running on the source cluster
 
-kubectl get ns
+> kubectl get ns
 
 ![](./media/image22.png)
 
 NOTE: apart from the default and system namespaces, planespotter, x1, y1
 and z1 exist
 
-kubectl get po \--all-namespaces
+> kubectl get po \--all-namespaces
 
 ![](./media/image23.png)
 
 > NOTE: Note the pods running in the default, planespotter and the x1,
 > y1 and z1 namespaces
 
-kubectl get pv \--all-namespaces
+> kubectl get pv \--all-namespaces
 
 ![](./media/image24.png)
 
-NOTE: There is a PV in the planespotter namespace, which contains DB
-data for MySQL
+> NOTE: There is a PV in the planespotter namespace, which contains DB
+> data for MySQL
 
 **Step 4:** Login to the planespotter and make sure everything is
 working and the DB data is being displayed
 
-kubectl get svc \--all-namespaces
+> kubectl get svc \--all-namespaces
 
 ![](./media/image25.png)
 
@@ -640,7 +629,7 @@ Run the following to annotate each pod that contains a volume to back up
 stateful pod and describe it. For eg. in our example mysql-0 is the
 stateful pod
 
-kubectl describe po mysql-0 -n planespotter
+> kubectl describe po mysql-0 -n planespotter
 
 The volumes are
 
@@ -686,28 +675,26 @@ Optional: false
 
 **Step 8:** Create a backup of the whole cluster
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
-./velero create backup \<BACKUP NAME\>
+> ./velero create backup \<BACKUP NAME\>
 
-E.g.
+> E.g.
 
-./velero create backup sourceclusterbk
+> ./velero create backup sourceclusterbk
 
 ![](./media/image28.png)
 
 **Step 9:** Check status of the backup
 
-./velero backup describe \<BACKUP NAME\>
+> ./velero backup describe \<BACKUP NAME\>
 
 **E.g.**
 
-./velero backup describe sourceclusterbk
+> ./velero backup describe sourceclusterbk
 
 ![](./media/image29.png)
 
-**\
-**
 
 **Step 10:** Login to Minio and check if the backup has been created. \>
 , e.g. http://10.40.14.43
@@ -718,18 +705,18 @@ E.g.
 
 **Step 11:** Create a backup of the planespotter namespace
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
-./velero backup create \<BACKUP NAME\> \--include-namespaces
+> ./velero backup create \<BACKUP NAME\> \--include-namespaces
 \<NAMESPACE1\>
 
 E.g.
 
-./velero backup create planespotterbk \--include-namespaces planespotter
+> ./velero backup create planespotterbk \--include-namespaces planespotter
 
 **Step 12:** Check status of the backup
 
-./velero backup describe planespotterbk
+> ./velero backup describe planespotterbk
 
 **Step 13:** Login to minio and check if the backup has been created.
 
@@ -750,23 +737,23 @@ namespace and an entire clusterbackup.
 
 **Step 1:** Get kube config for the source cluster
 
-pks get-kubeconfig \<target-cluster\> -a \<pks api\> -u \<user\> -p
+> pks get-kubeconfig \<target-cluster\> -a \<pks api\> -u \<user\> -p
 \<password\> -k
 
-E.g.
+> E.g.
 
-pks get-kubeconfig my-cluster -a pks.corp.local -u riaz -p VMware1! -k
+> pks get-kubeconfig my-cluster -a pks.corp.local -u riaz -p VMware1! -k
 
 **Step 2:** Set kubectl context to the target cluster
 
-kubectl config use-context \<target-cluster\>
+> kubectl config use-context \<target-cluster\>
 
 > E.g.\
 > kubectl config use-context my-cluster
 
 **Step 3:** Check all resources running on the target cluster
 
-kubectl get ns
+> kubectl get ns
 
 ![](./media/image33.png)
 
@@ -777,9 +764,9 @@ NOTE: planespotter , x1, y1 and z1 namespaces do not exist
 **Step 4:** Restore the planespotter namespace from the planespotterbk
 created in the previous step
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
-./velero restore create \--from-backup planespotterbk
+> ./velero restore create \--from-backup planespotterbk
 
 ![](./media/image34.png)
 
@@ -787,11 +774,11 @@ cd \~/velero/velero-v1.4.0-linux-amd64
 planespotter namespace should be created and the pods should be up and
 running. Make sure that the pv is also created and bound
 
-kubectl get ns
+> kubectl get ns
 
-kubectl get po -n planespotter
+> kubectl get po -n planespotter
 
-kubectl get pvc -n planespotter
+> kubectl get pvc -n planespotter
 
 ![](./media/image35.png)
 
@@ -803,7 +790,7 @@ kubectl get pvc -n planespotter
 browser to it and make sure all the data is visible in the application
 and the application is reachable
 
-kubectl get svc -n planespotter
+> kubectl get svc -n planespotter
 
 ![](./media/image38.png)
 
@@ -812,16 +799,16 @@ kubectl get svc -n planespotter
 **Step** **7:** Delete the planespotter namespace which will delete the
 application and the PV
 
-kubectl delete ns planespotter
+> kubectl delete ns planespotter
 
 **RESTORE THE CLUSTER BACKUP**
 
 **Step 8:** Restore the back of all resources from the source cluster to
 the target cluster
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
-./velero restore create \--from-backup sourceclusterbk
+> ./velero restore create \--from-backup sourceclusterbk
 
 ![](./media/image40.png)
 
@@ -829,13 +816,13 @@ cd \~/velero/velero-v1.4.0-linux-amd64
 planespotter , x1, y1 and z1 namespaces should be created. Pods,pv's,
 deployments and services should also be created.
 
-kubectl get ns
+> kubectl get ns
 
-kubectl get po \--all-namespaces
+> kubectl get po \--all-namespaces
 
-kubectl get pvc \--all-namespaces
+> kubectl get pvc \--all-namespaces
 
-kubectl get svc \--all-namespaces
+> kubectl get svc \--all-namespaces
 
 ![](./media/image41.png)
 
@@ -847,7 +834,7 @@ kubectl get svc \--all-namespaces
 browser to it and make sure all the data is visible in the application
 and the application is reachable
 
-kubectl get svc -n planespotter
+> kubectl get svc -n planespotter
 
 Snapshots
 =========
@@ -872,9 +859,9 @@ Compatibility
 
 **Step 1:** Add the vSphere velero plugin
 
-cd \~/velero/velero-v1.4.0-linux-amd64
+> cd \~/velero/velero-v1.4.0-linux-amd64
 
-./velero plugin add vsphereveleroplugin/velero-plugin-for-vsphere:1.0.0
+> ./velero plugin add vsphereveleroplugin/velero-plugin-for-vsphere:1.0.0
 
 **Step 2:** Create a volume Snapshot location
 
@@ -890,7 +877,7 @@ cd \~/velero/velero-v1.4.0-linux-amd64
 and specify the VolumeSnapshotLocation. Use the snapshot location
 created above
 
-./velero backup create my-backup \--include-namespaces=my-namespace
+> ./velero backup create my-backup \--include-namespaces=my-namespace
 \--snapshot-volumes \--volume-snapshot-locations **snapshotloc-vsphere**
 
 ![](./media/image45.png)
@@ -907,7 +894,7 @@ significant amount of time to complete.
 
 **Step 5:** Restore follows the same steps as above
 
-./velero restore create \--from-backup my-backup
+> ./velero restore create \--from-backup my-backup
 
 More info on Snapshots can be found on
 <https://github.com/vmware-tanzu/velero-plugin-for-vsphere>
