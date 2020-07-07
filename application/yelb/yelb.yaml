@@ -72,6 +72,10 @@ metadata:
   namespace: yelb
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: yelb-ui
+      tier: frontend
   template:
     metadata:
       labels:
@@ -154,6 +158,10 @@ metadata:
   namespace: yelb
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: yelb-appserver
+      tier: middletier     
   template:
     metadata:
       labels:
